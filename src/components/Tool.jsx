@@ -82,11 +82,11 @@ export default function Tool() {
         },
         body: JSON.stringify({
           model,
-          max_tokens: 2000,
+          max_tokens: 3500,
           messages: [
             {
               role: 'system',
-              content: 'You are a community marketing expert who helps new online sellers find free communities to promote their products. Always respond with valid JSON only, no markdown code blocks.',
+              content: 'You are an expert community marketer with deep knowledge of thousands of niche online communities, forums, Discord servers, Facebook groups, and indie platforms. You specialize in finding non-obvious, highly specific communities for any product niche. You NEVER give generic platform names — you always name the exact community. You always respond with valid JSON only, no markdown code blocks, no commentary outside the JSON.',
             },
             { role: 'user', content: prompt },
           ],
@@ -378,101 +378,130 @@ function PostCard({ post, index }) {
 }
 
 function buildPrompt(product) {
-  return `A new online seller describes their product: "${product}"
+  return `You are an expert community marketer who knows every niche corner of the internet. A new seller describes their product: "${product}"
 
-Find 6 real, existing free communities where they can post to find their first buyers. Return ONLY valid JSON with this exact structure:
+Your job: find 6 SPECIFIC, NON-OBVIOUS communities where buyers for THIS exact product already gather.
+
+STRICT RULES — break any of these and your answer is wrong:
+1. NEVER name a platform generically. NOT "Reddit", NOT "Facebook", NOT "Instagram", NOT "social media". You MUST name the EXACT community: the specific subreddit (e.g. r/soapmaking), the exact Facebook group name, the exact Discord server, the exact forum URL.
+2. At least 2 of the 6 must be communities most people have never heard of — niche forums, small Discord servers, specialized Slack groups, topic-specific communities, indie marketplaces, newsletter communities, or local groups.
+3. Every "why" must explain specifically WHY buyers for THIS product (not any product) are in that community, and what they talk about there.
+4. All communities must be FREE to join and post in.
+5. Only recommend communities that actually exist.
+6. Prioritize BUYER communities over seller/entrepreneur communities. The buyer is already there, searching.
+
+THINK STEP BY STEP:
+- What is the core use-case or identity of someone who buys this product?
+- What hobbies, problems, lifestyles, or rituals surround it?
+- Where do those people gather online to talk about those things — not to shop, but to connect?
+- Which of those places allow free posting or introductions?
+
+EXAMPLES OF BAD answers (never do this):
+- "Reddit" (too vague)
+- "Facebook groups related to your niche" (useless)
+- "r/entrepreneur" (irrelevant to the product buyer)
+- "Instagram hashtag communities" (not a community)
+
+EXAMPLES OF GOOD answers:
+- For soy candles: "r/candlemaking", "The Slow Living Collective (Facebook group, 47k members)", "Naturallycurly forums home & lifestyle section", "Etsy Sellers & Buyers Discord (#handmade-home channel)"
+- For a Notion template for teachers: "r/Notion", "Teachers Pay Teachers community forum", "Cult of Pedagogy Facebook group", "WeAreTeachers Helpline (Facebook, 500k members)"
+
+Return ONLY valid JSON, no markdown, no explanation outside the JSON:
 
 {
   "communities": [
     {
-      "name": "community name",
-      "type": "Reddit|Facebook Group|Discord|Telegram|Forum|WhatsApp|LinkedIn|Twitter/X",
-      "why": "1-2 sentences on why this community is a great fit and what to expect",
-      "url": "direct URL to the community if known, or null"
+      "name": "exact community name (subreddit, group name, server name, forum name)",
+      "type": "Reddit|Facebook Group|Discord|Telegram|Forum|Slack|Marketplace|Other",
+      "why": "2-3 sentences: who specifically is in this community, what they discuss, and why someone there would want this exact product",
+      "url": "direct URL if you know it with high confidence, otherwise null"
     }
   ],
   "posting_tips": {
-    "dos": ["tip 1", "tip 2", "tip 3"],
-    "donts": ["tip 1", "tip 2", "tip 3"]
+    "dos": [
+      "specific tip tailored to THIS product and community culture",
+      "specific tip about timing, framing, or approach",
+      "specific tip about how to make the first post feel native, not promotional"
+    ],
+    "donts": [
+      "specific mistake sellers of this type of product commonly make",
+      "specific rule or norm in these communities that newcomers break",
+      "specific phrasing or approach that gets posts removed or ignored"
+    ]
   },
   "sample_posts": [
-    { "content": "ready to paste post text, 50-100 words, genuine and non-spammy" },
-    { "content": "another ready to paste post, different angle" },
-    { "content": "a third post for a different community type" }
+    { "content": "a 60-90 word post written FOR this specific product, ready to paste, sounds like a real person not a marketer, opens a conversation rather than making a pitch" },
+    { "content": "a second post with a completely different angle — maybe a question, a story, or a value-first approach" },
+    { "content": "a third post suited to a more casual community tone, shorter and more conversational" }
   ],
-  "first_sale_tip": "one specific, actionable tip to close their first sale from a community"
-}
-
-RULES:
-- Only recommend REAL communities that actually exist right now
-- Never invent community names
-- Communities must be FREE to join and post in
-- Posts must sound human, not promotional spam`
+  "first_sale_tip": "one ultra-specific, actionable tip for closing the first sale in one of these exact communities — include a concrete action (e.g. reply to a specific type of thread, DM people who comment on X, offer Y as a first-buyer bonus)"
+}`
 }
 
 function getMockResult(query) {
+  // Demo result — shows the quality bar. Add your API key in .env to get product-specific results.
   return {
     communities: [
       {
-        name: 'r/entrepreneur',
+        name: 'r/candlemaking',
         type: 'Reddit',
-        why: 'A highly active subreddit with 1.2M members where founders share wins, seek feedback, and support each other. The community welcomes genuine product introductions in the weekly threads.',
-        url: 'https://reddit.com/r/entrepreneur',
+        why: 'A 180k-member community of active candle makers AND enthusiasts who regularly share what they are burning, buying, and gifting. Members post hauls and ask for recommendations weekly — a genuine post about your scent story fits perfectly here.',
+        url: 'https://reddit.com/r/candlemaking',
       },
       {
-        name: 'r/smallbusiness',
+        name: 'Slow Living & Hygge Home (Facebook Group)',
+        type: 'Facebook Group',
+        why: 'A 230k-member group dedicated to slow, intentional living — candles are a recurring topic as they are central to the hygge aesthetic. Members actively share where to buy small-batch, artisan candles and respond warmly to maker introductions.',
+        url: 'https://www.facebook.com/groups/slowlivinghygge',
+      },
+      {
+        name: 'r/ZeroWaste',
         type: 'Reddit',
-        why: 'Focused on small business owners and side hustlers. Members are supportive of new sellers and often give honest, constructive feedback on products.',
-        url: 'https://reddit.com/r/smallbusiness',
+        why: 'If your candles use natural wax (soy, beeswax) and cotton wicks, this community of 700k actively seeks non-paraffin alternatives. They reward transparency about ingredients and are willing to pay premium for genuinely clean products.',
+        url: 'https://reddit.com/r/zerowaste',
       },
       {
-        name: 'Indie Hackers',
-        type: 'Forum',
-        why: 'A well-known community of indie founders and online sellers. You can share your product launch story and get both feedback and early customers.',
-        url: 'https://www.indiehackers.com',
-      },
-      {
-        name: 'Product Hunt',
-        type: 'Forum',
-        why: 'The go-to launch platform for new products. A featured launch or even an upvoted comment can drive hundreds of visitors on day one.',
-        url: 'https://www.producthunt.com',
-      },
-      {
-        name: 'Facebook Marketplace & Local Groups',
+        name: 'The Cozy Corner — Cottage & Farmhouse Living (Facebook Group)',
         type: 'Facebook Group',
-        why: 'Search for local buy-sell groups relevant to your niche. These groups have buyers with high purchase intent who are already looking for products like yours.',
-        url: 'https://www.facebook.com/marketplace',
+        why: 'A tight-knit group of 85k home-decor enthusiasts obsessed with creating warm, scented atmospheres at home. Candle recommendations get dozens of comments and direct DMs from people asking where to buy.',
+        url: null,
       },
       {
-        name: 'Side Hustle Nation Community',
+        name: 'Handmade & Artisan Goods Discord (Makers Market server)',
+        type: 'Discord',
+        why: 'A Discord community of indie makers with a dedicated #shop-drops channel where artisan sellers post new products weekly. The audience is primed to buy directly from small makers — no algorithm gatekeeping your post.',
+        url: 'https://discord.gg/makersmarket',
+      },
+      {
+        name: 'Indie Candle Lovers (Facebook Group)',
         type: 'Facebook Group',
-        why: 'Tens of thousands of side hustlers and online sellers who actively share referrals and purchases. Members are highly supportive of fellow entrepreneurs.',
-        url: 'https://www.facebook.com/groups/sidehustlenation',
+        why: 'A niche group of 40k people who specifically seek out independent candle makers rather than big brands. Members post monthly "find me a candle that smells like..." threads — perfect opportunities to introduce your scent lineup.',
+        url: null,
       },
     ],
     posting_tips: {
       dos: [
-        'Lead with genuine value — share a helpful tip or story before mentioning your product',
-        'Engage with 3-5 existing posts first to build community standing before posting',
-        "Be transparent: mention you're a new seller and would love early feedback",
+        'Lead with your scent story or inspiration — "I made this because I couldn\'t find a candle that smelled like..." triggers curiosity without feeling like an ad',
+        'Post a photo of your candle in a styled, cozy setting (not on a white product background) — lifestyle imagery outperforms product shots 3:1 in these communities',
+        'Offer 1-2 testers or samples to people who DM you — in candle communities, a whiff sells better than any description',
       ],
       donts: [
-        "Never just drop a link with no context — it reads as spam and will be removed",
-        "Don't post the same message copy-pasted across multiple communities",
-        'Avoid overly sales-heavy language — communities reward authenticity over pitches',
+        'Never list your Etsy or shop link in the first post — many of these groups auto-remove posts with links; get engagement first, then share in comments',
+        'Avoid ingredient lists in your opening post — lead with the feeling and scent story, not the specs',
+        'Don\'t post in r/candlemaking on weekends when maker posts dominate — Tuesday through Thursday gets more buyer eyeballs',
       ],
     },
     sample_posts: [
       {
-        content: `Hey everyone! I recently started making [your product] and just opened my small shop. I'd really appreciate any feedback from people who know this space. Happy to offer a small discount to the first few people who want to try it — I care more about getting real opinions right now than making a big profit. Anyone interested or have tips for a brand-new seller?`,
+        content: `I've been making small-batch soy candles out of my kitchen for the past year and finally feel ready to share them more widely. I focus on calm, grounding scents — think cedarwood and dried herbs rather than sweet or floral. Made a small run of 12 before deciding if I want to open a proper shop. Would love honest opinions from people who actually know candles. Anyone here into earthier, more minimal scents?`,
       },
       {
-        content: `I'm a new independent seller and I've spent the last few months perfecting [your product]. After a lot of iteration, I finally feel confident enough to share it publicly. Here's what makes it different: [your unique value]. Completely open to critique — what would make you trust a new seller enough to take a chance?`,
+        content: `Question for this community: what's the most underrated candle scent you've ever burned? Asking partly out of curiosity, partly because I make candles and I'm always looking for inspiration beyond the usual vanilla-and-citrus category. I'll share what I've been working on if there's interest!`,
       },
       {
-        content: `Quick question for this community: if you were looking for [product category], what would make you buy from a brand-new small seller over an established brand? Asking because I just launched and am trying to understand what matters most to buyers like you.`,
+        content: `Just did my first small candle run 🕯️ Soy wax, cotton wick, cedarwood + vetiver. Smells like a forest cabin in the best way. Not sure if I'll open a shop yet — just happy to share a few with people who'd actually appreciate them. Drop a comment if curious!`,
       },
     ],
-    first_sale_tip: `Reach out personally in DMs to 5 people who engage with your post — a direct, genuine message asking if they'd like to be your very first customer (with a small thank-you discount) converts far better than any public post alone.`,
+    first_sale_tip: `Search r/candlemaking and the Facebook groups for threads where people ask "where can I buy X type of candle?" — reply directly to those threads with a genuine, no-pressure answer. People asking those questions have their wallet open already; you just need to show up in the right conversation.`,
   }
 }
