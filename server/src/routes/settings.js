@@ -25,7 +25,7 @@ function writeEnvFile(vars) {
   fs.writeFileSync(ENV_PATH, lines + '\n');
 }
 
-const SENSITIVE_KEYS = ['ANTHROPIC_API_KEY', 'NOTION_TOKEN', 'GOOGLE_CLIENT_SECRET'];
+const SENSITIVE_KEYS = ['GROQ_API_KEY', 'ANTHROPIC_API_KEY', 'NOTION_TOKEN', 'GOOGLE_CLIENT_SECRET'];
 
 router.get('/', (req, res) => {
   const vars = readEnvFile();
@@ -34,6 +34,7 @@ router.get('/', (req, res) => {
     safe[k] = SENSITIVE_KEYS.includes(k) && v ? '***SET***' : v;
   }
   res.json({
+    groqKeySet: !!vars.GROQ_API_KEY || !!process.env.GROQ_API_KEY,
     anthropicKeySet: !!vars.ANTHROPIC_API_KEY,
     notionTokenSet: !!vars.NOTION_TOKEN,
     notionPageId: vars.NOTION_PAGE_ID || '',
@@ -49,6 +50,7 @@ router.post('/', (req, res) => {
     const vars = readEnvFile();
 
     const allowed = [
+      'GROQ_API_KEY',
       'ANTHROPIC_API_KEY',
       'NOTION_TOKEN',
       'NOTION_PAGE_ID',

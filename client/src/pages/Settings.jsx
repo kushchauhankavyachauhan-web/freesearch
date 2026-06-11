@@ -5,6 +5,7 @@ import { api } from '../utils/api';
 export default function Settings() {
   const [searchParams] = useSearchParams();
   const [form, setForm] = useState({
+    GROQ_API_KEY: '',
     ANTHROPIC_API_KEY: '',
     NOTION_TOKEN: '',
     NOTION_PAGE_ID: '',
@@ -52,6 +53,7 @@ export default function Settings() {
       setSaved(true);
       setServerSettings(prev => ({
         ...prev,
+        groqKeySet: !!payload.GROQ_API_KEY || prev?.groqKeySet,
         anthropicKeySet: !!payload.ANTHROPIC_API_KEY || prev?.anthropicKeySet,
         notionTokenSet: !!payload.NOTION_TOKEN || prev?.notionTokenSet,
         notionPageId: payload.NOTION_PAGE_ID || prev?.notionPageId,
@@ -83,11 +85,29 @@ export default function Settings() {
       </div>
 
       <div className="space-y-6">
+        {/* Groq */}
+        <SettingsSection
+          title="Groq API (Free ✨)"
+          icon="⚡"
+          description="Free AI — used first if set. Get a key at console.groq.com"
+          badge={serverSettings?.groqKeySet ? 'Connected' : null}
+        >
+          <PasswordField
+            label="API Key"
+            value={form.GROQ_API_KEY}
+            placeholder={serverSettings?.groqKeySet ? '••••••••••••• (saved)' : 'gsk_...'}
+            onChange={v => handleChange('GROQ_API_KEY', v)}
+          />
+          <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="text-xs text-accent-light hover:underline mt-1.5 inline-block">
+            Get free Groq API key →
+          </a>
+        </SettingsSection>
+
         {/* Anthropic */}
         <SettingsSection
           title="Anthropic API"
           icon="🤖"
-          description="Required for SOP generation with Claude"
+          description="Optional — Claude fallback if Groq key is not set"
           badge={serverSettings?.anthropicKeySet ? 'Connected' : null}
         >
           <PasswordField

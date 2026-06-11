@@ -1,5 +1,4 @@
 const express = require('express');
-const Anthropic = require('@anthropic-ai/sdk');
 const { getDb } = require('../db');
 
 const router = express.Router();
@@ -33,6 +32,45 @@ Return exactly this structure:
 
 Make it professional, complete, and actionable. Include 4-8 detailed steps minimum.`;
 
+async function callGroq(apiKey, transcript, inputType) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      max_tokens: 4096,
+      temperature: 0.3,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: `Convert this ${inputType === 'voice' ? 'voice transcript' : 'text'} into a professional SOP:\n\n${transcript}` }
+      ]
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Groq API error: ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices[0].message.content.trim();
+}
+
+async function callAnthropic(apiKey, transcript, inputType) {
+  const Anthropic = require('@anthropic-ai/sdk');
+  const client = new Anthropic({ apiKey });
+  const message = await client.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 4096,
+    system: SYSTEM_PROMPT,
+    messages: [
+      { role: 'user', content: `Convert this ${inputType === 'voice' ? 'voice transcript' : 'text'} into a professional SOP:\n\n${transcript}` }
+    ]
+  });
+  return message.content[0].text.trim();
+}
+
 router.post('/generate', async (req, res) => {
   try {
     const { transcript, inputType = 'voice' } = req.body;
@@ -41,41 +79,34 @@ router.post('/generate', async (req, res) => {
       return res.status(400).json({ error: 'Transcript is required' });
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      return res.status(400).json({ error: 'Anthropic API key not configured. Please set it in Settings.' });
+    const groqKey = process.env.GROQ_API_KEY;
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
+    if (!groqKey && !anthropicKey) {
+      return res.status(400).json({ error: 'No AI API key configured. Add a Groq or Anthropic API key in Settings.' });
     }
 
-    const client = new Anthropic({ apiKey });
+    let rawText;
+    if (groqKey) {
+      rawText = await callGroq(groqKey, transcript, inputType);
+    } else {
+      rawText = await callAnthropic(anthropicKey, transcript, inputType);
+    }
 
-    const message = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: 'user',
-          content: `Convert this ${inputType === 'voice' ? 'voice transcript' : 'text'} into a professional SOP:\n\n${transcript}`
-        }
-      ]
-    });
-
-    const rawText = message.content[0].text.trim();
     let sop;
     try {
       sop = JSON.parse(rawText);
     } catch {
       const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Claude did not return valid JSON');
+      if (!jsonMatch) throw new Error('AI did not return valid JSON. Try again.');
       sop = JSON.parse(jsonMatch[0]);
     }
 
     const db = getDb();
-    const stmt = db.prepare(`
+    const result = db.prepare(`
       INSERT INTO sops (sop_id, title, department, owner, version, data)
       VALUES (?, ?, ?, ?, ?, ?)
-    `);
-    const result = stmt.run(
+    `).run(
       sop.sopId || 'SOP-001',
       sop.title || 'Untitled SOP',
       sop.department || '',
