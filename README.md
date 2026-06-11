@@ -1,86 +1,168 @@
-# FreeReach — Your First Buyers, Free
+# Workscribe
 
-An AI-powered tool that helps new online sellers find free communities to get their first buyers.
+**Speak once. Document forever.**
 
-## Quick Start
+Workscribe is an AI-powered SOP (Standard Operating Procedure) generator that converts your voice or text into professional documentation using Claude.
 
-1. Clone the repo and install dependencies:
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Set up your AI API key:
-   ```bash
-   cp .env.example .env
-   ```
-   Open `.env` and replace `your-api-key-here` with your actual API key.
+- 🎙 **Voice Input** — Speak naturally; real-time transcript shown on screen
+- ✏️ **Text Input** — Type your process as a fallback
+- 🤖 **AI Generation** — Claude structures your input into a complete SOP
+- 📄 **PDF Export** — Download a professionally formatted PDF
+- 🔗 **Notion Export** — Push SOPs directly to Notion
+- 📝 **Google Docs Export** — Create Google Docs via OAuth
+- 📋 **Copy as Text** — Plain text for any use
+- 📚 **History** — All SOPs auto-saved; browse and revisit anytime
 
-3. Run the dev server:
-   ```bash
-   npm run dev
-   ```
+## Tech Stack
 
-## Adding Your AI API Key
-
-FreeReach uses the OpenAI-compatible API format. You have several options:
-
-### Option 1: OpenAI (recommended for quality)
-- Get a key at https://platform.openai.com
-- Set `VITE_AI_API_KEY=sk-...` in `.env`
-- Set `VITE_AI_MODEL=gpt-4o-mini` (cheapest, great quality)
-
-### Option 2: Groq (free tier, very fast)
-- Get a free key at https://console.groq.com
-- Set `VITE_AI_BASE_URL=https://api.groq.com/openai/v1`
-- Set `VITE_AI_MODEL=llama3-70b-8192`
-
-### Option 3: Together AI (free credits)
-- Get credits at https://api.together.ai
-- Set `VITE_AI_BASE_URL=https://api.together.xyz/v1`
-- Set `VITE_AI_MODEL=mistralai/Mixtral-8x7B-Instruct-v0.1`
-
-**Without a key:** The app runs in demo mode with mock data — great for testing the UI.
-
-## Deploy Free
-
-### Vercel (recommended)
-```bash
-npm install -g vercel
-vercel
-```
-Add your `VITE_AI_API_KEY` in Vercel's Environment Variables settings.
-
-### Netlify
-```bash
-npm run build
-# Drag and drop the `dist/` folder to app.netlify.com/drop
-```
-Add env vars in Netlify → Site settings → Environment variables.
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18, Vite, Tailwind CSS |
+| Backend | Node.js 18+, Express |
+| Database | SQLite (better-sqlite3) |
+| AI | Anthropic Claude (claude-sonnet-4-20250514) |
+| Speech | Web Speech API (Chrome built-in) |
+| PDF | @react-pdf/renderer |
+| Notion | @notionhq/client |
+| Google | googleapis (OAuth2) |
 
 ## Project Structure
 
 ```
-src/
-  components/
-    Navbar.jsx          # Fixed top navigation
-    Hero.jsx            # Landing section with 3D coin
-    CoinScene.jsx       # Three.js 3D coin with cursor parallax
-    ParticleField.jsx   # Floating particle background
-    Tool.jsx            # Core AI tool UI + freemium logic
-    UpgradeModal.jsx    # Paywall modal with waitlist capture
-    HowItWorks.jsx      # 3-step section
-    WhyFreeReach.jsx    # Benefits with 3D tilt cards
-    TiltCard.jsx        # Reusable 3D tilt wrapper
-    SocialProof.jsx     # Honest "just launched" section
-    Pricing.jsx         # Pricing plans + waitlist form
-    FAQ.jsx             # Accordion FAQ
-    Footer.jsx          # Footer
-    ScrollProgressBar.jsx  # Top scroll indicator
+workscribe/
+├── client/              # React + Vite frontend
+│   ├── src/
+│   │   ├── components/  # Layout, SopDocument, ExportPanel, SopPDF
+│   │   ├── hooks/       # useSpeech (Web Speech API)
+│   │   ├── pages/       # Home, History, SopView, Settings
+│   │   └── utils/       # api.js (fetch wrapper)
+│   └── package.json
+├── server/              # Express backend
+│   ├── src/
+│   │   ├── routes/      # sop.js, export.js, settings.js
+│   │   ├── db.js        # SQLite setup
+│   │   └── index.js     # Entry point
+│   └── package.json
+├── data/                # SQLite database (auto-created)
+├── .env                 # Your API keys (git-ignored)
+├── .env.example         # Template
+└── README.md
 ```
 
-## Connecting Payments
+## Quick Setup
 
-When ready to accept payments, replace the waitlist email capture in `UpgradeModal.jsx` with:
-- **Razorpay** (great for INR): https://razorpay.com/docs
-- **Stripe**: https://stripe.com/docs
-- **Lemon Squeezy**: Easy SaaS billing, https://lemonsqueezy.com
+### 1. Clone & Install
+
+```bash
+# Install server dependencies
+cd server
+npm install
+
+# Install client dependencies
+cd ../client
+npm install
+```
+
+### 2. Configure Environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your Anthropic API key (minimum required):
+
+```env
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
+
+### 3. Run
+
+Open two terminals:
+
+```bash
+# Terminal 1 — Server
+cd server
+npm run dev    # or: npm start
+
+# Terminal 2 — Client
+cd client
+npm run dev
+```
+
+Open **http://localhost:5173** in Chrome.
+
+> **Note:** Voice input requires Chrome (or any browser supporting the Web Speech API).
+
+---
+
+## API Key Setup
+
+### Anthropic (Required)
+
+1. Go to [console.anthropic.com](https://console.anthropic.com/account/keys)
+2. Create an API key
+3. Add to `.env` as `ANTHROPIC_API_KEY`
+
+Or paste it in the app's Settings page — it saves to `.env` automatically.
+
+### Notion (Optional)
+
+1. Go to [notion.so/my-integrations](https://www.notion.so/my-integrations) → New integration
+2. Copy the **Internal Integration Token**
+3. Share your target Notion page with the integration
+4. Copy the **Page ID** from the URL (`notion.so/Page-Title-**[PAGE_ID]**`)
+5. Add both to Settings in the app
+
+### Google Docs (Optional)
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Create a project → Enable **Google Docs API** and **Google Drive API**
+3. Create **OAuth 2.0 Client ID** (Web application)
+4. Add `http://localhost:3001/api/export/google/callback` as an authorized redirect URI
+5. Add Client ID and Client Secret to Settings in the app
+6. Click **Connect Google Account** in Settings to authorize
+
+---
+
+## How It Works
+
+1. **Speak or type** your process description
+2. The transcript is sent to the Express backend
+3. The backend calls **Claude API** with a structured system prompt
+4. Claude returns a complete SOP in JSON format
+5. The SOP is saved to **SQLite** and displayed
+6. Export via PDF, Notion, Google Docs, or copy as text
+
+## SOP JSON Structure
+
+```json
+{
+  "title": "...",
+  "sopId": "SOP-001",
+  "version": "1.0",
+  "department": "...",
+  "owner": "...",
+  "frequency": "...",
+  "duration": "...",
+  "purpose": "...",
+  "scope": "...",
+  "steps": [{ "title": "...", "description": "...", "responsible": "..." }],
+  "warnings": ["..."],
+  "notes": ["..."],
+  "successCriteria": "..."
+}
+```
+
+## Security Notes
+
+- API keys are stored only in your local `.env` file
+- The `.env` file is git-ignored
+- All AI/Notion/Google API calls happen server-side only
+- Google OAuth tokens are stored in memory (server session only)
+- Never expose your backend to the public internet without adding authentication
+
+## License
+
+MIT

@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0a0a0f;
+    color: #e4e4f0;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #12121a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a40;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #6c63ff;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-accent hover:bg-accent-dark text-white font-medium px-5 py-2.5 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply bg-surface-2 hover:bg-border text-gray-300 hover:text-white font-medium px-5 py-2.5 rounded-lg transition-all duration-200 border border-border;
+  }
+
+  .card {
+    @apply bg-surface rounded-xl border border-border;
+  }
+
+  .input {
+    @apply bg-surface-2 border border-border rounded-lg px-4 py-2.5 text-gray-200 placeholder-muted w-full focus:outline-none focus:border-accent transition-colors;
+  }
+
+  .label {
+    @apply text-sm font-medium text-gray-400 mb-1.5 block;
+  }
+}
+
+/* Pulse animation for recording */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.recording-pulse::before,
+.recording-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(108, 99, 255, 0.4);
+  animation: pulse-ring 1.5s ease-out infinite;
+}
+
+.recording-pulse::after {
+  animation-delay: 0.75s;
+}
+
+/* Waveform animation */
+@keyframes wave {
+  0%, 100% { height: 6px; }
+  50% { height: 24px; }
+}
+
+.wave-bar {
+  width: 3px;
+  background: #6c63ff;
+  border-radius: 2px;
+  animation: wave 0.8s ease-in-out infinite;
+}
