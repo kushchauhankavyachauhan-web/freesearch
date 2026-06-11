@@ -3,11 +3,6 @@
   "outputDirectory": "client/dist",
   "installCommand": "npm install",
   "framework": null,
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "rewrites": [
     { "source": "/api/sop/generate", "destination": "/api/sop/generate" },
     { "source": "/api/sop/history", "destination": "/api/sop/history" },
