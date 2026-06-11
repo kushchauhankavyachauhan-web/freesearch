@@ -1,0 +1,20 @@
+{
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/sop/generate", "destination": "/api/sop/generate" },
+    { "source": "/api/sop/history", "destination": "/api/sop/history" },
+    { "source": "/api/sop/:id", "destination": "/api/sop/[id]" },
+    { "source": "/api/export/notion", "destination": "/api/export/notion" },
+    { "source": "/api/export/google/auth", "destination": "/api/export/google-auth" },
+    { "source": "/api/export/google/callback", "destination": "/api/export/google-callback" },
+    { "source": "/api/export/google-docs", "destination": "/api/export/google-docs" },
+    { "source": "/api/settings", "destination": "/api/settings" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

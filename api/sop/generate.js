@@ -55,7 +55,7 @@ async function callGroq(apiKey, transcript, inputType) {
   return data.choices[0].message.content.trim();
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   if (req.method !== 'POST') {
