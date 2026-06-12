@@ -9,10 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.52.0",
+    "groq-sdk": "^0.9.1",
     "@react-three/drei": "^9.109.2",
     "@react-three/fiber": "^8.17.10",
-    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^11.0.0",
     "cors": "^2.8.5",
