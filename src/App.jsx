@@ -1,65 +1,36 @@
-import { useEffect, useRef, useState } from 'react'
-import Lenis from 'lenis'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import ScrollProgressBar from './components/ScrollProgressBar'
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Tool from './components/Tool'
-import HowItWorks from './components/HowItWorks'
-import WhyFreeReach from './components/WhyFreeReach'
-import SocialProof from './components/SocialProof'
-import Pricing from './components/Pricing'
-import FAQ from './components/FAQ'
-import Footer from './components/Footer'
-import CustomCursor from './components/CustomCursor'
-import PageLoader from './components/PageLoader'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import Landing from './pages/Landing';
+import Auth from './pages/Auth';
+import Onboarding from './pages/Onboarding';
+import Dashboard from './pages/Dashboard';
+import DeepWork from './pages/DeepWork';
+import WeeklyReport from './pages/WeeklyReport';
+import { isAuthenticated } from './lib/auth';
 
-gsap.registerPlugin(ScrollTrigger)
+function Protected({ children }) {
+  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+}
+
+function PublicOnly({ children }) {
+  return !isAuthenticated() ? children : <Navigate to="/dashboard" replace />;
+}
 
 export default function App() {
-  const lenisRef = useRef(null)
-  const [loaded, setLoaded] = useState(false)
-
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    })
-    lenisRef.current = lenis
-
-    lenis.on('scroll', ScrollTrigger.update)
-    gsap.ticker.add((time) => { lenis.raf(time * 1000) })
-    gsap.ticker.lagSmoothing(0)
-
-    return () => {
-      lenis.destroy()
-    }
-  }, [])
-
   return (
-    <>
-      {/* Custom cursor — desktop only */}
-      <div className="hidden md:block">
-        <CustomCursor />
-      </div>
-
-      {/* Page loader */}
-      {!loaded && <PageLoader onComplete={() => setLoaded(true)} />}
-
-      <div className="grain bg-espresso min-h-screen">
-        <ScrollProgressBar />
-        <Navbar />
-        <Hero />
-        <Tool />
-        <HowItWorks />
-        <WhyFreeReach />
-        <SocialProof />
-        <Pricing />
-        <FAQ />
-        <Footer />
-      </div>
-    </>
-  )
+    <BrowserRouter>
+      <AnimatePresence mode="wait">
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<PublicOnly><Auth mode="login" /></PublicOnly>} />
+          <Route path="/signup" element={<PublicOnly><Auth mode="signup" /></PublicOnly>} />
+          <Route path="/onboarding" element={<Protected><Onboarding /></Protected>} />
+          <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
+          <Route path="/deepwork" element={<Protected><DeepWork /></Protected>} />
+          <Route path="/report" element={<Protected><WeeklyReport /></Protected>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AnimatePresence>
+    </BrowserRouter>
+  );
 }
