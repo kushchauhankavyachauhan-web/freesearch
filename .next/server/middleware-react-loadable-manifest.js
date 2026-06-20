@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}";
+self.__REACT_LOADABLE_MANIFEST='{"app/scan/page.jsx -> @xenova/transformers":{"id":39078,"files":["static/chunks/590caa2a.f2bd774fa8f873bd.js","static/chunks/6139e184.d294ba7ddadf5f47.js","static/chunks/b2db8554.017583fc575de58a.js","static/chunks/413.33a616b7ab602512.js","static/chunks/135.c1db4ef1aaefb942.js"]}}';
