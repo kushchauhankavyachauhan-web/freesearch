@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #143C3D;
+  --mint: #2FC7A8;
+  --bg: #F4F6F5;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: #F4F6F5;
+  color: #143C3D;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #F4F6F5; }
+::-webkit-scrollbar-thumb { background: #2FC7A8; border-radius: 3px; }
+
+.card-shadow { box-shadow: 0 2px 16px rgba(20,60,61,0.07); }
+.mint-glow { box-shadow: 0 0 28px rgba(47,199,168,0.3); }
+
+@keyframes scanDown {
+  0%   { top: 0%;   opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #2FC7A8, transparent);
+  animation: scanDown 2.5s ease-in-out infinite;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-slide { animation: fadeSlideUp 0.4s ease-out forwards; }
