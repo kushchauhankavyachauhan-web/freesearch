@@ -1,37 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --navy: #143C3D;
+  --mint: #2FC7A8;
+  --bg: #F4F6F5;
+}
+
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #0D0B2A;
-  color: #ffffff;
+  background-color: #F4F6F5;
+  color: #143C3D;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0D0B2A; }
-::-webkit-scrollbar-thumb { background: #4F46E5; border-radius: 3px; }
+::-webkit-scrollbar-track { background: #F4F6F5; }
+::-webkit-scrollbar-thumb { background: #2FC7A8; border-radius: 3px; }
 
-.glass {
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.08);
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(20,60,61,0.08);
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(20,60,61,0.06);
 }
-.glass-strong {
-  background: rgba(79,70,229,0.08);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(79,70,229,0.2);
+
+.mint-glow { box-shadow: 0 0 32px rgba(47,199,168,0.25); }
+
+.circuit-line {
+  stroke-dasharray: 6 4;
+  animation: dash 8s linear infinite;
 }
-.gradient-text {
-  background: linear-gradient(135deg,#818CF8,#4F46E5,#C7D2FE);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@keyframes dash {
+  to { stroke-dashoffset: -200; }
 }
-.glow { box-shadow: 0 0 40px rgba(79,70,229,0.3); }
+
+.spin-slow {
+  animation: spin 20s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pulse-mint {
+  animation: pulseMint 2.5s ease-in-out infinite;
+}
+@keyframes pulseMint {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.scan-line {
+  animation: scanDown 2s ease-in-out infinite;
+}
+@keyframes scanDown {
+  0% { top: 0%; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
 canvas { display: block; }

@@ -4,15 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        navy: '#0D0B2A',
-        indigo: {
-          DEFAULT: '#4F46E5',
-          400: '#818CF8',
-          500: '#6366F1',
-          600: '#4F46E5',
-          900: '#1E1B4B',
-        },
-        lavender: '#818CF8',
+        navy: '#143C3D',
+        mint: '#2FC7A8',
+        bg: '#F4F6F5',
+        'navy-light': '#1a4f51',
+        'mint-dark': '#23a88d',
+        'mint-light': '#5dd9be',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
