@@ -6,6 +6,7 @@ import { useStore } from '../lib/store.js';
 const CITIZEN_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/scan', label: 'Scan' },
+  { href: '/identify', label: 'Identify Item' },
   { href: '/devices', label: 'My Devices' },
   { href: '/marketplace', label: 'Marketplace' },
   { href: '/history', label: 'History' },
