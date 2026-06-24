@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const WA_NUMBER = "919XXXXXXXXX";
+const WA_NUMBER = "919311321008";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

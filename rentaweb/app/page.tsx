@@ -2,7 +2,7 @@
 import { useState } from "react";
 import ListingCard from "@/components/ListingCard";
 
-const WA_NUMBER = "919XXXXXXXXX";
+const WA_NUMBER = "919311321008";
 
 const listings = [
   {

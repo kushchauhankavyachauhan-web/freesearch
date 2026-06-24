@@ -1,6 +1,6 @@
 import { CheckIcon } from "./Icons";
 
-const WA_NUMBER = "919XXXXXXXXX";
+const WA_NUMBER = "919311321008";
 
 interface ListingCardProps {
   category: string;
